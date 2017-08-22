@@ -3,6 +3,6 @@ html, body {
   padding: 0;
 }
 
-.donut:hover {
-  background-color: 'black';
+.highlight {
+  font-size: 1.5em;
 }
