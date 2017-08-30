@@ -1,6 +1,28 @@
-html, body {
+html, body, ul, a, canvas, svg, div {
   margin: 0;
   padding: 0;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  text-decoration: inherit;
+  vertical-align: inherit;
+  box-sizing: inherit;
+  background: transparent;
+  opacity: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+body {
+  background-color: aliceblue;
 }
 
 .country:hover {
@@ -13,4 +35,27 @@ html, body {
 
 .hidden {
   display: none;
+}
+
+.footer {
+  height: 30px;
+  background-color: white;
+  padding: 15px;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: flex-start;
+  vertical-align: middle;
+  color: steelblue;
+}
+
+.footer-links li {
+  margin: 0px 10px;
+}
+
+.footer a:hover {
+  font-weight: bold;
+  font-size: 16px;
+  color: darkgray;
 }
