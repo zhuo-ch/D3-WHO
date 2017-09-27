@@ -23,6 +23,7 @@ a {
 
 body {
   background-color: aliceblue;
+  height: 100%
 }
 
 .country:hover {
