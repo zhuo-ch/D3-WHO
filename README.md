@@ -22,5 +22,5 @@
 This is currently a proof of concept and not a complete project.
 
 * [WHOviewer](http://www.whoviewer.us/) currently only supports curated data. Top level indicators and lower level causes have been hand picked.
-* Work is needed to implement a robust algorithm to better index top level indicators and lower level causes to make this app compatible with the entire WHO database.
+* Needs a robust algorithm to better index top level indicators and lower level causes to make this app compatible with the entire WHO database.
 * Future implementations might incorporate a full menu to select from the entire WHO database.
