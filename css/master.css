@@ -44,8 +44,8 @@ body {
   width: 100%;
   background-color: white;
   padding: 15px;
-  position: absolute;
-  bottom: 30;
+  position: fixed;
+  bottom: 0px;
 }
 
 .footer-links {
