@@ -14,9 +14,6 @@ class Globe extends React.Component {
     this.colorGrad = ['#3366ff', '#5b84ff', '#6699ff', '#9999ff', '#cc66ff', '#ffa8e2', '#ff66cc', '#ff0066', '#ff0000', '#990000', '#0000ff'];
     this.coords = { x: 0, y: 0, z: 0, prevX: 0, prevY: 0, prevZ: 0, rate: 0.004 };
     this.prevTime = d3.now();
-    this.handleMouseMove = this.handleMouseMove.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-    this.setMouseActions = this.setMouseActions.bind(this);
     this.setRotation = this.setRotation.bind(this);
   }
 
@@ -31,8 +28,8 @@ class Globe extends React.Component {
     const grat = d3.geoGraticule10();
     const path = d3.geoPath(globe).context(context);
 debugger
-    this.setState({ globe, grat, path, context })
-      .then(this.scale());
+    this.setState({ globe, grat, path, context }, this.scale);
+      // .then(this.scale());
       // .then(this.setRotation());
     // this.scale();
   }
@@ -53,7 +50,7 @@ debugger
     const timeDifference = currentTime - this.prevTime;
 
     if (timeDifference < timeElapsed) {
-      const xyz = this.globe.rotate();
+      const xyz = this.state.globe.rotate();
       xyz[0] += timeDifference * this.coords.rate;
       this.state.globe.rotate(xyz);
       this.coords.x = xyz[0];
