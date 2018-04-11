@@ -8,17 +8,31 @@ import Donut from './donut';
 class Globe extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { globe: '', grat: '', path: '', context: '', initialized: false };
+    this.state = {
+      globe: '',
+      grat: '',
+      path: '',
+      context: '',
+      initialized: false,
+      highlight: '',
+    };
     this.water = { type: 'Sphere' };
     this.colors = { water: '#aacbff', land: '#003fa5', grat: '#89b6ff', country: '#a00' };
     this.colorGrad = ['#3366ff', '#5b84ff', '#6699ff', '#9999ff', '#cc66ff', '#ffa8e2', '#ff66cc', '#ff0066', '#ff0000', '#990000', '#0000ff'];
     this.coords = { x: 0, y: 0, z: 0, prevX: 0, prevY: 0, prevZ: 0, rate: 0.004 };
     this.prevTime = d3.now();
     this.setRotation = this.setRotation.bind(this);
+    this.handleHover = this.handleHover.bind(this);
   }
 
   componentDidMount() {
     this.setGlobe();
+  }
+
+  handleHover(e) {
+    e.preventDefault();
+
+    this.findHoverItem(e);
   }
 
   setGlobe() {
@@ -26,7 +40,7 @@ class Globe extends React.Component {
     const globe = d3.geoOrthographic().precision(0.1);
     const grat = d3.geoGraticule10();
     const path = d3.geoPath(globe).context(context);
-debugger
+
     this.setState({ globe, grat, path, context }, this.startGlobe);
   }
 
@@ -70,6 +84,27 @@ debugger
     this.setState({ initialized: true });
   }
 
+  findHoverItem(e) {
+    // debugger
+    const pos = this.state.globe.invert([e.pageX, e.pageY]);
+    const country = this.props.indicatorValues.globeMap.features.find(feature => d3.geoContains(feature, pos));
+    const highlight = { type: 'FeatureCollection', features: [country] };
+
+    if (country) {
+      this.highlight = highlight;
+    }
+
+    // const menuItem = this.findMenuItem(event);
+
+    // if (menuItem) {
+    //   this.setMenuHighlight(menuItem);
+    // } else if (country) {
+    //   this.setCountryHighlight(country);
+    // } else {
+    //   this.setMenuHighlight();
+    // }
+  }
+
   findColor(country) {
     const color = this.items.find(item => item.country = country.id);
 
@@ -88,13 +123,33 @@ debugger
     DrawUtil.drawObj(context, path, this.water, this.colors.water);
     DrawUtil.drawLine(context, path, this.state.grat, this.colors.grat);
     DrawUtil.drawMap(context, path, this.props.indicatorValues.globeMap, this.colorGrad);
+    if (this.highlight) {
+      DrawUtil.drawObj(context, path, this.highlight, 'white');
+    }
+
+    // DrawUtil.drawHighlight(context, this.state.highlight);
 
     // this.setState({ context, path });
   }
 
+  drawHighlight() {
+    const { context, path } = this.state;
+    if (this.highlight) {
+      debugger
+
+    }
+
+  }
+
   render() {
+    const [ width, height ] = this.props.dims;
+
     return (
-      <canvas ref="canvas" width={ this.props.dims[0] } height={ this.props.dims[1] }>
+      <canvas
+        ref="canvas"
+        width={ width }
+        height={ height }
+        onMouseOver={ this.handleHover } >
       </canvas>
     );
   }
