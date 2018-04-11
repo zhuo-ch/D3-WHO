@@ -26,7 +26,7 @@ class Globe extends React.Component {
     const globe = d3.geoOrthographic().precision(0.1);
     const grat = d3.geoGraticule10();
     const path = d3.geoPath(globe).context(context);
-
+debugger
     this.setState({ globe, grat, path, context }, this.startGlobe);
   }
 
@@ -37,7 +37,7 @@ class Globe extends React.Component {
 
     const globe = this.state.globe
       .scale((0.8 * Math.min(width, height))/2)
-      .translate([width * 2 / 5, height / 2]);
+      .translate([width / 2, height / 2]);
 
     this.setState({ canvas, globe, renderDims: [width, height] });
   }
@@ -86,10 +86,10 @@ class Globe extends React.Component {
     context.clearRect(0, 0, renderDims[0], renderDims[1]);
     context.globalAlpha = 0.7;
     DrawUtil.drawObj(context, path, this.water, this.colors.water);
-    DrawUtil.drawLine(context, path, this.grat, this.colors.grat);
+    DrawUtil.drawLine(context, path, this.state.grat, this.colors.grat);
     DrawUtil.drawMap(context, path, this.props.indicatorValues.globeMap, this.colorGrad);
 
-    this.setState({ context, path });
+    // this.setState({ context, path });
   }
 
   render() {
