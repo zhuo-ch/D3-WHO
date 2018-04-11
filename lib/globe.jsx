@@ -9,10 +9,6 @@ class Globe extends React.Component {
   constructor(props) {
     super(props);
     this.state = { globe: '', grat: '', path: '', context: '' };
-    // this.state = { countries: [], dataMap: {}, title: '' }
-    // this.dims = dims
-    // this.whoList = APIUtil.whoList;
-    // this.currentListItem = 0;
     this.water = { type: 'Sphere' };
     this.colors = { water: '#aacbff', land: '#003fa5', grat: '#89b6ff', country: '#a00' };
     this.colorGrad = ['#3366ff', '#5b84ff', '#6699ff', '#9999ff', '#cc66ff', '#ffa8e2', '#ff66cc', '#ff0066', '#ff0000', '#990000', '#0000ff'];
@@ -22,61 +18,12 @@ class Globe extends React.Component {
     this.handleClick = this.handleClick.bind(this);
     this.setMouseActions = this.setMouseActions.bind(this);
     this.setRotation = this.setRotation.bind(this);
-    // this.setData = this.setData.bind(this);
   }
 
   componentDidMount() {
-    // this.getItems();
-    // this.checkDims();
-    // this.setCanvas();
     this.setGlobe();
     this.startGlobe();
   }
-
-  // getItems() {
-  //   this.timer ? this.timer.stop() : '';
-  //   this.startLoading();
-  //
-  //   APIUtil.fetchWHO(APIUtil.whoList[this.props.indicator])
-  //   .then(data => this.setData(data))
-  //   .then(
-  //     setTimeout(() => {
-  //       this.startGlobe();
-  //       // this.setMouseActions();
-  //     }, 1000)
-  //   );
-  // }
-
-  // setData(data) {
-  //   // debugger
-  //   const countries = Util.formatCountries(data);
-  //   const dataMap = Util.bindMap(worldMap, countries);
-  //   const title = worldMap.features.find(el => el.fact).fact.title;
-  //   debugger
-  //   this.setState({ countries, dataMap, title });
-  // }
-
-  setMouseActions() {
-    this.canvas.call(
-      d3.drag()
-      .on('start', this.dragStart.bind(this))
-      .on('drag', this.dragging.bind(this))
-      .on('end', this.dragEnd.bind(this))
-    )
-    .on('mousemove', this.handleMouseMove)
-    .on('click', this.handleClick);
-  }
-
-  // checkDims() {
-  //   if (!(this.renderDims)) {
-  //       this.renderDims = this.dims;
-  //   }
-  // }
-
-  // setCanvas() {
-  //   this.canvas = d3.select('#canvas').append('canvas');
-  //   this.context = this.canvas.node().getContext('2d');
-  // }
 
   setGlobe() {
     const context = this.getContext();
@@ -84,140 +31,20 @@ class Globe extends React.Component {
     const grat = d3.geoGraticule10();
     const path = d3.geoPath(globe).context(context);
 debugger
-    this.setState({ globe, grat, path, context });
-    this.scale();
-  }
-
-  handleMouseMove() {
-    this.findHoverItem(d3.event);
-  }
-
-  handleClick() {
-    if (this.findMenuItem(d3.event)) {
-      const clickIndex = this.menuItems.indexOf(this.findMenuItem(d3.event));
-
-      if (clickIndex !== this.currentListItem) {
-        this.currentListItem = clickIndex;
-        this.getItems();
-      }
-    } else if (this.findClickItem(d3.event)) {
-      const country = this.findClickItem(d3.event);
-      this.timer.stop();
-      this.startLoading();
-
-      $.when(...Util.getCountry(this.whoList[this.currentListItem], country.id))
-        .done((...args) => {
-          const facts = args.every(el => Array.isArray(el)) ? Util.formatMultipleIndicators(args) : Util.formatSingleIndicator(args[0]);
-          this.setupMini();
-          this.donut = new Donut([this.dims[0], this.dims[1] - this.renderDims[1]], facts, country);
-          this.donut.drawDonut();
-        });
-    }
-  }
-
-  setMenuHighlight(item) {
-    if (item) {
-      this.menuHighlight = item;
-      d3.select('canvas')
-        .classed('globe', false)
-        .classed('country', true);
-    } else {
-      this.menuHighlight = '';
-      this.highlight = '';
-      d3.select('canvas')
-        .classed('country', false)
-        .classed('globe', true);
-    }
-  }
-
-  setCountryHighlight(country) {
-    this.highlight = { type: 'FeatureCollection', features: [country]};
-    d3.select('canvas')
-      .classed('globe', false)
-      .classed('country', true);
-  }
-
-  findMenuItem(event) {
-    const x = event.layerX, y = event.layerY;
-    const item = this.menuItems.find((el) => x >= el.nw[0] && x <= el.se[0] && y >= el.nw[1] && y <= el.se[1]);
-
-    return item ? item : '';
-  }
-
-  findHoverItem(event) {
-    const pos = this.globe.invert([event.layerX, event.layerY]);
-    const country = this.worldMap.features.find(feature => d3.geoContains(feature, pos));
-    const menuItem = this.findMenuItem(event);
-
-    if (menuItem) {
-      this.setMenuHighlight(menuItem);
-    } else if (country) {
-      this.setCountryHighlight(country);
-    } else {
-      this.setMenuHighlight();
-    }
-  }
-
-  findClickItem(event) {
-    if (this.highlight.features) {
-      const country = this.highlight.features[0];
-
-      return country;
-    }
-  }
-
-  setupMini() {
-    this.renderDims = this.dims.map(dim => dim / 4);
-    d3.select('canvas')
-      .attr('width', this.dims[0] / 4)
-      .attr('height', this.dims[1] / 4);
-    this.setGlobe();
-    this.startGlobe();
-    this.canvas.on('click', this.revertGlobe.bind(this));
-  }
-
-  revertGlobe() {
-    d3.selectAll('svg').selectAll('*').remove();
-    d3.selectAll('svg').remove();
-    this.renderDims = this.dims;
-    this.setGlobe();
-    this.startGlobe();
-    this.canvas.on('click', this.handleClick);
+    this.setState({ globe, grat, path, context })
+      .then(this.scale());
+      // .then(this.setRotation());
+    // this.scale();
   }
 
   scale() {
     const canvas = this.refs.canvas;
     const width = this.props.dims[0], height = this.props.dims[1];
     canvas.width = width, canvas.height = height;
-    this.globe
+debugger
+    this.state.globe
       .scale((0.8 * Math.min(width, height))/2)
       .translate([width * 2 / 5, height / 2]);
-  }
-
-  dragStart() {
-    this.timer.stop();
-    this.coords.prevX = 0;
-    this.coords.prevY = 0;
-  }
-
-  dragging() {
-    const xyz = [this.coords.x, this.coords.y, this.coords.z];
-
-    if (this.coords.prevX === 0 && this.coords.prevY === 0) {
-      this.coords.prevX = d3.event.x;
-      this.coords.prevY = d3.event.y;
-    } else {
-      this.coords.y -= (d3.event.y - this.coords.prevY);
-      this.coords.x += (d3.event.x - this.coords.prevX);
-      this.coords.prevY = d3.event.y;
-      this.coords.prevX = d3.event.x;
-      this.globe.rotate(xyz);
-      this.render();
-    }
-  }
-
-  dragEnd() {
-    this.timer.restart(this.setRotation, 700);
   }
 
   setRotation(timeElapsed) {
@@ -228,7 +55,7 @@ debugger
     if (timeDifference < timeElapsed) {
       const xyz = this.globe.rotate();
       xyz[0] += timeDifference * this.coords.rate;
-      this.globe.rotate(xyz);
+      this.state.globe.rotate(xyz);
       this.coords.x = xyz[0];
       this.render();
     }
@@ -244,14 +71,6 @@ debugger
     }
   }
 
-  startLoading() {
-    let int = 0;
-    this.interval = setInterval(() => {
-      this.renderLoading(int);
-      int += 1;
-    }, 300);
-  }
-
   findColor(country) {
     const color = this.items.find(item => item.country = country.id);
 
@@ -262,31 +81,7 @@ debugger
     return this.refs.canvas.getContext('2d');
   }
 
-  renderLoading(time) {
-    return DrawUtil.drawLoading(this.getContext(), this.props.dims, time);
-  }
-
   render() {
-    // const ctx = this.context, path = this.path, renderDims = this.renderDims;
-    // ctx.clearRect(0, 0, renderDims[0], renderDims[1]);
-    // ctx.globalAlpha = 0.7;
-    // DrawUtil.drawObj(ctx, path, this.water, this.colors.water);
-    // DrawUtil.drawLine(ctx, path, this.grat, this.colors.grat);
-    // DrawUtil.drawMap(ctx, path, this.worldMap, this.colorGrad);
-    //
-    // if (this.renderDims === this.dims) {
-    //   this.menuItems = DrawUtil.drawMenu(ctx, this.dims, this.currentListItem);
-    //   DrawUtil.drawTitle(ctx, this.title, this.renderDims);
-    // }
-    //
-    // if (this.menuHighlight) {
-    //   DrawUtil.drawHighlight(ctx, this.menuHighlight);
-    // }
-    //
-    // if (this.highlight) {
-    //   DrawUtil.drawObj(ctx, this.path, this.highlight, 'white');
-    // }
-// debugger
     return (
       <canvas ref="canvas" width={ this.props.dims[0] } height={ this.props.dims[1] }>
       </canvas>
