@@ -149,7 +149,7 @@ class Globe extends React.Component {
         ref="canvas"
         width={ width }
         height={ height }
-        onMouseOver={ this.handleHover } >
+        onMouseMove={ this.handleHover } >
       </canvas>
     );
   }
