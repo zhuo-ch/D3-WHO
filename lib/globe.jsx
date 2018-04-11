@@ -8,7 +8,8 @@ import Donut from './donut';
 class Globe extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { countries: [], dataMap: {}, title: '' }
+    this.state = { globe: '', grat: '', path: '', context: '' };
+    // this.state = { countries: [], dataMap: {}, title: '' }
     // this.dims = dims
     // this.whoList = APIUtil.whoList;
     // this.currentListItem = 0;
@@ -21,38 +22,39 @@ class Globe extends React.Component {
     this.handleClick = this.handleClick.bind(this);
     this.setMouseActions = this.setMouseActions.bind(this);
     this.setRotation = this.setRotation.bind(this);
-    this.setData = this.setData.bind(this);
+    // this.setData = this.setData.bind(this);
   }
 
   componentDidMount() {
-    this.getItems();
+    // this.getItems();
     // this.checkDims();
     // this.setCanvas();
     this.setGlobe();
+    this.startGlobe();
   }
 
-  getItems() {
-    this.timer ? this.timer.stop() : '';
-    this.startLoading();
+  // getItems() {
+  //   this.timer ? this.timer.stop() : '';
+  //   this.startLoading();
+  //
+  //   APIUtil.fetchWHO(APIUtil.whoList[this.props.indicator])
+  //   .then(data => this.setData(data))
+  //   .then(
+  //     setTimeout(() => {
+  //       this.startGlobe();
+  //       // this.setMouseActions();
+  //     }, 1000)
+  //   );
+  // }
 
-    APIUtil.fetchWHO(APIUtil.whoList[this.props.indicator])
-    .then(data => this.setData(data))
-    .then(
-      setTimeout(() => {
-        this.startGlobe();
-        // this.setMouseActions();
-      }, 1000)
-    );
-  }
-
-  setData(data) {
-    // debugger
-    const countries = Util.formatCountries(data);
-    const dataMap = Util.bindMap(worldMap, countries);
-    const title = worldMap.features.find(el => el.fact).fact.title;
-    debugger
-    this.setState({ countries, dataMap, title });
-  }
+  // setData(data) {
+  //   // debugger
+  //   const countries = Util.formatCountries(data);
+  //   const dataMap = Util.bindMap(worldMap, countries);
+  //   const title = worldMap.features.find(el => el.fact).fact.title;
+  //   debugger
+  //   this.setState({ countries, dataMap, title });
+  // }
 
   setMouseActions() {
     this.canvas.call(
@@ -77,9 +79,12 @@ class Globe extends React.Component {
   // }
 
   setGlobe() {
-    this.globe = d3.geoOrthographic().precision(0.1);
-    this.grat = d3.geoGraticule10();
-    this.path = d3.geoPath(this.globe).context(this.context);
+    const context = this.getContext();
+    const globe = d3.geoOrthographic().precision(0.1);
+    const grat = d3.geoGraticule10();
+    const path = d3.geoPath(globe).context(context);
+debugger
+    this.setState({ globe, grat, path, context });
     this.scale();
   }
 
@@ -281,7 +286,7 @@ class Globe extends React.Component {
     // if (this.highlight) {
     //   DrawUtil.drawObj(ctx, this.path, this.highlight, 'white');
     // }
-debugger
+// debugger
     return (
       <canvas ref="canvas" width={ this.props.dims[0] } height={ this.props.dims[1] }>
       </canvas>
