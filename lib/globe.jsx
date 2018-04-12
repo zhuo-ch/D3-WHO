@@ -22,17 +22,64 @@ class Globe extends React.Component {
     this.coords = { x: 0, y: 0, z: 0, prevX: 0, prevY: 0, prevZ: 0, rate: 0.004 };
     this.prevTime = d3.now();
     this.setRotation = this.setRotation.bind(this);
-    this.handleHover = this.handleHover.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.handleHoverMove = this.handleHoverMove.bind(this);
+    this.handleDragMove = this.handleDragMove.bind(this);
+    this.handleDragStart = this.handleDragStart.bind(this);
+    this.handleMouseMove = this.handleHoverMove;
   }
 
   componentDidMount() {
     this.setGlobe();
   }
 
-  handleHover(e) {
+  handleHoverMove(e) {
     e.preventDefault();
 
     this.findHoverItem(e);
+  }
+
+  handleMouseDown(e) {
+    // e.preventDefault();
+    setTimeout(this.handleDragStart, 200);
+  }
+
+  handleMouseUp(e) {
+    e.preventDefault();
+    this.toggleMouseMove();
+    this.startGlobe();
+  }
+
+  handleDragStart() {
+    this.toggleMouseMove();
+    this.timer.stop();
+    this.coords.prevX = 0;
+    this.coords.prevY = 0;
+    this.setState({ initialized: false });
+  }
+
+  handleDragMove(e) {
+    e.preventDefault();
+
+    if (this.coords.prevX === 0 && this.coords.prevY === 0) {
+      this.coords.prevX = e.pageX;
+      this.coords.prevY = e.pageY;
+    } else {
+      this.coords.y -= (e.pageY - this.coords.prevY);
+      this.coords.x += (e.pageX - this.coords.prevX);
+      this.coords.prevY = e.pageY;
+      this.coords.prevX = e.pageX;
+      const xyz = [this.coords.x, this.coords.y, this.coords.z];
+      this.state.globe.rotate(xyz);
+      this.drawGlobe();
+    }
+  }
+
+  toggleMouseMove() {
+    this.handleMouseMove = this.handleMouseMove === this.handleHoverMove
+      ? this.handleDragMove
+      : this.handleHoverMove;
   }
 
   setGlobe() {
@@ -85,7 +132,6 @@ class Globe extends React.Component {
   }
 
   findHoverItem(e) {
-    // debugger
     const pos = this.state.globe.invert([e.pageX, e.pageY]);
     const country = this.props.indicatorValues.globeMap.features.find(feature => d3.geoContains(feature, pos));
     const highlight = { type: 'FeatureCollection', features: [country] };
@@ -93,16 +139,6 @@ class Globe extends React.Component {
     if (country) {
       this.highlight = highlight;
     }
-
-    // const menuItem = this.findMenuItem(event);
-
-    // if (menuItem) {
-    //   this.setMenuHighlight(menuItem);
-    // } else if (country) {
-    //   this.setCountryHighlight(country);
-    // } else {
-    //   this.setMenuHighlight();
-    // }
   }
 
   findColor(country) {
@@ -123,33 +159,23 @@ class Globe extends React.Component {
     DrawUtil.drawObj(context, path, this.water, this.colors.water);
     DrawUtil.drawLine(context, path, this.state.grat, this.colors.grat);
     DrawUtil.drawMap(context, path, this.props.indicatorValues.globeMap, this.colorGrad);
+
     if (this.highlight) {
       DrawUtil.drawObj(context, path, this.highlight, 'white');
     }
-
-    // DrawUtil.drawHighlight(context, this.state.highlight);
-
-    // this.setState({ context, path });
-  }
-
-  drawHighlight() {
-    const { context, path } = this.state;
-    if (this.highlight) {
-      debugger
-
-    }
-
   }
 
   render() {
     const [ width, height ] = this.props.dims;
-
+console.log('r');
     return (
       <canvas
         ref="canvas"
         width={ width }
         height={ height }
-        onMouseMove={ this.handleHover } >
+        onMouseDown={ this.handleMouseDown }
+        onMouseUp={ this.handleMouseUp }
+        onMouseMove={ this.handleMouseMove } >
       </canvas>
     );
   }
