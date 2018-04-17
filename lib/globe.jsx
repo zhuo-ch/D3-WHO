@@ -42,16 +42,23 @@ class Globe extends React.Component {
 
   handleMouseDown(e) {
     // e.preventDefault();
-    setTimeout(this.handleDragStart, 200);
+    this.dragging = setTimeout(this.handleDragStart, 200);
   }
 
   handleMouseUp(e) {
     e.preventDefault();
-    this.toggleMouseMove();
-    this.startGlobe();
+
+    if (this.dragging) {
+      clearTimeout(this.dragging);
+      this.dragging = '';
+    } else {
+      this.toggleMouseMove();
+      this.startRotation();
+    }
   }
 
   handleDragStart() {
+    this.dragging = '';
     this.toggleMouseMove();
     this.timer.stop();
     this.coords.prevX = 0;
@@ -121,7 +128,10 @@ class Globe extends React.Component {
 
   startGlobe() {
     this.scale();
+    this.startRotation();
+  }
 
+  startRotation() {
     if (this.timer) {
       this.timer.restart(this.setRotation);
     } else {
@@ -136,9 +146,7 @@ class Globe extends React.Component {
     const country = this.props.indicatorValues.globeMap.features.find(feature => d3.geoContains(feature, pos));
     const highlight = { type: 'FeatureCollection', features: [country] };
 
-    if (country) {
-      this.highlight = highlight;
-    }
+    this.highlight = country ? highlight : '';
   }
 
   findColor(country) {
@@ -167,9 +175,10 @@ class Globe extends React.Component {
 
   render() {
     const [ width, height ] = this.props.dims;
-console.log('r');
+
     return (
       <canvas
+        className="globe"
         ref="canvas"
         width={ width }
         height={ height }
