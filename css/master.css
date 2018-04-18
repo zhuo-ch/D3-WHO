@@ -32,11 +32,48 @@ body {
 }
 
 .globe:hover {
-  cursor: move;
+  cursor: pointer;
 }
 
-.hidden {
-  display: none;
+.nav-bar {
+  display: flex;
+  justify-content: flex-start;
+  background-color: white;
+}
+
+.letter-accent {
+  font-size: 1.5em;
+  color: steelblue;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  margin: 3px 20px;
+}
+
+.menu {
+  margin: 15px;
+  align-content: center;
+  border-left: 1px solid gainsboro;
+  border-right: 1px solid gainsboro;
+}
+
+.menu-title {
+  /* vertical-align: center; */
+}
+
+.menu:hover {
+  cursor: pointer;
+  background-color: steelblue;
+}
+
+.menu-items {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .footer {
@@ -63,4 +100,8 @@ body {
   font-weight: bold;
   font-size: 16px;
   color: darkgray;
+}
+
+.hidden {
+  display: none;
 }
