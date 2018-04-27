@@ -9,20 +9,28 @@ class Who extends React.Component {
     super(props);
     this.state = { showGlobe: false, indicator: 0, countries: [], globeMap: {}, title: '', selecting: false };
     this.handleSelectionClick = this.handleSelectionClick.bind(this);
+    this.handleListClick = this.handleListClick.bind(this);
   }
 
   componentDidMount() {
-    const list = APIUtil.whoList;
-    let data;
-
-    APIUtil.fetchWHO(list[this.state.indicator])
-      .then(data => this.setData(data));
+    this.getData();
   }
 
   handleSelectionClick(e) {
     e.preventDefault();
 
     this.setState({ selecting: this.state.selecting ? false : true });
+  }
+
+  handleListClick(e) {
+    e.preventDefault();
+    this.setState({ indicator: e.currentTarget.value }, this.getData)
+  }
+
+  getData() {
+    const list = APIUtil.whoList;
+
+    return APIUtil.fetchWHO(list[this.state.indicator]).then(data => this.setData(data));
   }
 
   setData(data) {
@@ -47,8 +55,20 @@ class Who extends React.Component {
     return <article className="header">{ title }</article>;
   }
 
+  getListEl(item, idx) {
+    return (
+      <li
+        key={ idx }
+        value={ idx }
+        className="menu-item"
+        onClick={ this.handleListClick } >
+        { item.title }
+      </li>
+    );
+  }
+
   getList() {
-    const list = APIUtil.whoList.map(el => el.title);
+    const list = APIUtil.whoList.map(this.getListEl.bind(this));
     const { selecting } = this.state;
     const hidden = this.state.selecting ? '' : 'hidden';
 
@@ -61,10 +81,11 @@ class Who extends React.Component {
 
   getSelector() {
     const selectionList = this.getList();
+    const selecting = this.state.selecting ? "menu-selecting" : "menu";
 
     return (
       <article
-        className="menu"
+        className={ selecting }
         onClick={ this.handleSelectionClick }>
         <span className="menu-title">
           Select a Data Set

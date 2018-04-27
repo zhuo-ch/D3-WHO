@@ -8,7 +8,7 @@ html, body, ul, a, canvas, svg, div {
   text-align: inherit;
   text-decoration: inherit;
   vertical-align: inherit;
-  box-sizing: inherit;
+  box-sizing: border-box;
   background: transparent;
   opacity: inherit;
 }
@@ -52,28 +52,68 @@ body {
   justify-content: space-around;
   align-items: center;
   margin: 3px 20px;
+  font-size: 0.6em;
 }
 
 .menu {
   margin: 15px;
+  padding: 10px;
   align-content: center;
   border-left: 1px solid gainsboro;
   border-right: 1px solid gainsboro;
+  color: steelblue;
+  position: relative;
+}
+
+.menu-selecting {
+  margin: 15px;
+  padding: 10px;
+  align-content: center;
+  border-left: 1px solid gainsboro;
+  border-right: 1px solid gainsboro;
+  position: relative;
+  background-color: steelblue;
+  color: white;
+}
+
+.menu-selecting:hover {
+  cursor: pointer;
 }
 
 .menu-title {
-  /* vertical-align: center; */
+  vertical-align: center;
+  width: 100%;
 }
 
 .menu:hover {
   cursor: pointer;
   background-color: steelblue;
+  color: white;
 }
 
 .menu-items {
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: absolute;
+  top: 110%;
+  left: -1px;
+  background-color: steelblue;
+  padding: 10px;
+  color: white;
+}
+
+.menu-item {
+  border-bottom: 1px solid white;
+  margin: 5px 0px;
+  padding-bottom: 5px;
+}
+
+.menu-item:hover {
+  cursor: pointer;
+  background-color: white;
+  color: steelblue;
 }
 
 .footer {
