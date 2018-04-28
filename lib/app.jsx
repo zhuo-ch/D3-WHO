@@ -1,4 +1,5 @@
 import React from 'react';
+import { merge } from 'lodash';
 import * as APIUtil from './api_util';
 import * as Util from './util';
 import Globe from './globe.jsx';
@@ -7,50 +8,87 @@ import { worldMap } from './world_map';
 class Who extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showGlobe: false, indicator: 0, countries: [], globeMap: {}, title: '', selecting: false };
+    this.state = { showGlobe: false, indicator: 0, countries: [], globeMap: {}, title: '', selecting: true };
     this.handleSelectionClick = this.handleSelectionClick.bind(this);
     this.handleListClick = this.handleListClick.bind(this);
   }
 
   componentDidMount() {
-    this.getData();
+    this.getGlobeData()
+      .then(newState => {
+        newState.selecting = this.toggleSelection();
+        debugger
+        this.setState(newState);
+      });
   }
 
   handleSelectionClick(e) {
     e.preventDefault();
 
-    this.setState({ selecting: this.state.selecting ? false : true });
+    this.setState({ selecting: this.toggleSelection() });
   }
 
   handleListClick(e) {
     e.preventDefault();
-    this.setState({ indicator: e.currentTarget.value }, this.getData)
+    e.stopPropagation();
+
+    this.setState({ indicator: e.currentTarget.value }, this.handleClickData);
   }
 
-  getData() {
-    const list = APIUtil.whoList;
-
-    return APIUtil.fetchWHO(list[this.state.indicator]).then(data => this.setData(data));
+  handleClickData() {
+    this.getGlobeData()
+      .then(newState => {
+        newState.selecting = this.toggleSelection();
+        debugger
+        this.setState(newState);
+      });
   }
 
-  setData(data) {
-    const countries = Util.formatCountries(data);
-    const globeMap = Util.bindMap(worldMap, countries);
-    const title = globeMap.features.find(el => el.fact).fact.title;
-
-    this.setState({ countries, globeMap, title, showGlobe: true });
+  toggleSelection() {
+    return this.state.selecting ? false : true;
   }
 
-  getHeaderItem(text) {
+//   getData(callback) {
+//     const list = APIUtil.whoList;
+// debugger
+//     return APIUtil.fetchWHO(list[this.state.indicator]).then(data => this.setData(data, callback && callback));
+//   }
+
+  getGlobeData() {
+    const listItem = APIUtil.whoList[this.state.indicator];
+
+    return APIUtil.fetchWHO(listItem).then(data => {
+      const countries = Util.formatCountries(data);
+      const globeMap = Util.bindMap(worldMap, countries);
+      const title = globeMap.features.find(el => el.fact).fact.title;
+
+      return { countries, globeMap, title, showGlobe: true };
+    });
+  }
+
+  // setData(data) {
+  //   this.setState(data);
+  // }
+
+//   setData(data) {
+//     debugger
+//     const countries = Util.formatCountries(data);
+//     const globeMap = Util.bindMap(worldMap, countries);
+//     const title = globeMap.features.find(el => el.fact).fact.title;
+// debugger
+//     return this.setState({ countries, globeMap, title, showGlobe: true });
+//   }
+
+  getHeaderItem(text, idx) {
     return (
-      <article>
+      <article key={ idx }>
         <span className="letter-accent">{ text[0] }</span><span>{ text.slice(1, text.length ) }</span>
       </article>
     );
   }
 
   getHeader() {
-    const title = ["World", "Health", "Viewer"].map(el => this.getHeaderItem(el));
+    const title = ["World", "Health", "Viewer"].map((el, idx)=> this.getHeaderItem(el, idx));
 
     return <article className="header">{ title }</article>;
   }
