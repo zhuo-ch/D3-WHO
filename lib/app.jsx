@@ -137,7 +137,7 @@ class Who extends React.Component {
     return (
       <div className="modal">
         <div className='modal spinner-cover'></div>
-        <i className='icon fas fa-spinner fa-10x fa-pulse'></i>
+        <i className='icon fa fa-spinner fa-pulse'></i>
 
       </div>
     )
