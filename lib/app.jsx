@@ -14,12 +14,7 @@ class Who extends React.Component {
   }
 
   componentDidMount() {
-    this.getGlobeData()
-      .then(newState => {
-        newState.selecting = this.toggleSelection();
-        debugger
-        this.setState(newState);
-      });
+    this.getData();
   }
 
   handleSelectionClick(e) {
@@ -32,14 +27,14 @@ class Who extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
-    this.setState({ indicator: e.currentTarget.value }, this.handleClickData);
+    this.setState({ indicator: e.currentTarget.value }, this.getData);
   }
 
-  handleClickData() {
+  getData() {
     this.getGlobeData()
       .then(newState => {
         newState.selecting = this.toggleSelection();
-        debugger
+
         this.setState(newState);
       });
   }
