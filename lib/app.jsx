@@ -8,7 +8,15 @@ import { worldMap } from './world_map';
 class Who extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showGlobe: false, indicator: 0, countries: [], globeMap: {}, title: '', selecting: true };
+    this.state = {
+      showGlobe: false,
+      indicator: 0,
+      countries: [],
+      globeMap: {},
+      title: '',
+      selecting: true,
+      fetching: true
+    };
     this.handleSelectionClick = this.handleSelectionClick.bind(this);
     this.handleListClick = this.handleListClick.bind(this);
   }
@@ -20,27 +28,31 @@ class Who extends React.Component {
   handleSelectionClick(e) {
     e.preventDefault();
 
-    this.setState({ selecting: this.toggleSelection() });
+    this.setState({ selecting: this.toggleState('selecting') });
   }
 
   handleListClick(e) {
     e.preventDefault();
     e.stopPropagation();
 
-    this.setState({ indicator: e.currentTarget.value }, this.getData);
+    this.setState(
+      { indicator: e.currentTarget.value, fetching: this.toggleState('fetching') }
+      , this.getData
+    );
   }
 
   getData() {
     this.getGlobeData()
       .then(newState => {
-        newState.selecting = this.toggleSelection();
+        newState.selecting = this.toggleState('selecting');
+        newState.fetching = this.toggleState('fetching');
 
         this.setState(newState);
       });
   }
 
-  toggleSelection() {
-    return this.state.selecting ? false : true;
+  toggleState(toggle) {
+    return this.state[toggle] ? false : true;
   }
 
   getGlobeData() {
@@ -138,7 +150,7 @@ class Who extends React.Component {
       <div>
         { menu }
         {
-          this.state.selecting
+          this.state.fetching
           && this.getSpinner()
         }
         {
