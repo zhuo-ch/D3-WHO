@@ -43,12 +43,6 @@ class Who extends React.Component {
     return this.state.selecting ? false : true;
   }
 
-//   getData(callback) {
-//     const list = APIUtil.whoList;
-// debugger
-//     return APIUtil.fetchWHO(list[this.state.indicator]).then(data => this.setData(data, callback && callback));
-//   }
-
   getGlobeData() {
     const listItem = APIUtil.whoList[this.state.indicator];
 
@@ -60,19 +54,6 @@ class Who extends React.Component {
       return { countries, globeMap, title, showGlobe: true };
     });
   }
-
-  // setData(data) {
-  //   this.setState(data);
-  // }
-
-//   setData(data) {
-//     debugger
-//     const countries = Util.formatCountries(data);
-//     const globeMap = Util.bindMap(worldMap, countries);
-//     const title = globeMap.features.find(el => el.fact).fact.title;
-// debugger
-//     return this.setState({ countries, globeMap, title, showGlobe: true });
-//   }
 
   getHeaderItem(text, idx) {
     return (
@@ -140,12 +121,26 @@ class Who extends React.Component {
     );
   }
 
+  getSpinner() {
+    return (
+      <div className="modal">
+        <div className='modal spinner-cover'></div>
+        <i className='icon fas fa-spinner fa-10x fa-pulse'></i>
+
+      </div>
+    )
+  }
+
   render() {
     const menu = this.getMenu();
 
     return (
       <div>
         { menu }
+        {
+          this.state.selecting
+          && this.getSpinner()
+        }
         {
           this.state.showGlobe
           && <Globe dims={ this.props.dims } indicatorValues={ this.state }/>
