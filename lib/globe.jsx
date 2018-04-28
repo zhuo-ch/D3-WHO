@@ -41,7 +41,7 @@ class Globe extends React.Component {
   }
 
   handleMouseDown(e) {
-    // e.preventDefault();
+    e.preventDefault();
     this.dragging = setTimeout(this.handleDragStart, 200);
   }
 
@@ -142,7 +142,7 @@ class Globe extends React.Component {
   }
 
   findHoverItem(e) {
-    const pos = this.state.globe.invert([e.pageX, e.pageY]);
+    const pos = this.state.globe.invert([e.nativeEvent.offsetX, e.nativeEvent.offsetY]);
     const country = this.props.indicatorValues.globeMap.features.find(feature => d3.geoContains(feature, pos));
     const highlight = { type: 'FeatureCollection', features: [country] };
 
